@@ -1,12 +1,14 @@
 package com.branch.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 public class UserResponse {
 
     @JsonProperty("user_name")
@@ -21,6 +23,6 @@ public class UserResponse {
     @JsonProperty("created_at")
     private String createdAt;
     @JsonProperty("repos")
-    private List<Repository> repositoryList = new ArrayList<>();
+    private List<UserRepository> userRepositoryList = List.of();
 
 }

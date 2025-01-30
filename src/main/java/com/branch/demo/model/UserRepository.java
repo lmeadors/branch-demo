@@ -1,9 +1,11 @@
 package com.branch.demo.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class Repository {
+@Builder
+public class UserRepository {
     private String name;
     private String url;
 }
