@@ -8,8 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
@@ -67,8 +70,16 @@ public class GithubApi {
                             .geoLocation(user.getLocation())
                             .userRepositoryList(repositoryList)
                             .build();
-                });
+                })
+                .onErrorMap(e -> new UserNotFoundException(username));
 
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public static class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(String message) {
+            super(message);
+        }
     }
 
 }
