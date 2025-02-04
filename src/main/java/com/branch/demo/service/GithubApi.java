@@ -28,6 +28,10 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class GithubApi {
 
+    // these are here to make testing simpler
+    public static final String USER_URI = "/{username}";
+    public static final String REPO_LIST_URI = "/{username}/repos";
+
     private final WebClient webClient;
 
     @Cacheable("GithubApi")
@@ -37,12 +41,12 @@ public class GithubApi {
 
         log.debug("getUserResponse username: {}", username);
         final var githubUserMono = webClient.get()
-                .uri("/{username}", username)
+                .uri(USER_URI, username)
                 .retrieve()
                 .bodyToMono(GithubUser.class);
 
         final var githubRepositoryMono = webClient.get()
-                .uri("/{username}/repos", username)
+                .uri(REPO_LIST_URI, username)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<GithubRepository>>() {
                     // java generics can be silly sometimes
@@ -71,7 +75,10 @@ public class GithubApi {
                             .userRepositoryList(repositoryList)
                             .build();
                 })
-                .onErrorMap(e -> new UserNotFoundException(username));
+                .onErrorMap(e -> {
+                    log.error(e.toString(), e);
+                    return new UserNotFoundException(username);
+                });
 
     }
 
